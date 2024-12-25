@@ -17,6 +17,7 @@ spec:
     volumeMounts:
     - name: shared-data
       mountPath: /data
+  restartPolicy: Never
   volumes:
     - name: shared-data
       emptyDir: {}

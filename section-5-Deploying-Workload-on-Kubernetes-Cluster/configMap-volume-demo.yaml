@@ -12,6 +12,7 @@ spec:
     - name: config-volume
       mountPath: "/etc/config"
       readOnly: true
+  restartPolicy: Never
   volumes:
   - name: config-volume
     configMap:

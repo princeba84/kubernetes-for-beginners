@@ -16,9 +16,11 @@ data:
     server {
       listen 90;
       server_name localhost;
-      root /usr/share/nginx/html;
-      index index.html
-
+      location / {
+        root /usr/share/nginx/html;
+        index index.html;
+      }   
+    }
 
 ---
 apiVersion: apps/v1
@@ -47,7 +49,6 @@ spec:
         volumeMounts:
         - name: custom-nginx-config
           mountPath: /etc/nginx/conf.d
-          subPath: nginx.conf
       volumes:
       - name: custom-nginx-config
         configMap:
