@@ -46,6 +46,8 @@ spec:
       containers:
       - image: nginx
         name: nginx
+        ports:
+        - containerPort: 90
         volumeMounts:
         - name: custom-nginx-config
           mountPath: /etc/nginx/conf.d

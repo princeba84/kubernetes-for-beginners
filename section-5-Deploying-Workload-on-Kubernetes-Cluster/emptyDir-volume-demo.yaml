@@ -4,13 +4,14 @@ kind: Pod
 metadata:
   name: emptydir-volume-demo
 spec:
-  containers:
+  initContainers:
   - name: container-1
     image: busybox
-    command: ["sh", "-c", "echo 'This is container 1 data' > /data/container1.txt && sleep 3600"]
+    command: ["sh", "-c", "echo 'This is container 1 data' > /data/container1.txt"]
     volumeMounts:
     - name: shared-data
       mountPath: /data
+  containers:
   - name: container-2
     image: busybox
     command: ["sh", "-c", "cat /data/container1.txt && sleep 3600"]
