@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx-rs
+
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  labels:
+    env: test
+    rs: nginx
+  name: nginx-rs
+  namespace: nginx-rs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      env: test
+      rs: nginx
+  template:
+    metadata:
+      labels:
+        env: test
+        rs: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: rs-container
+        ports:
+        - containerPort: 80  

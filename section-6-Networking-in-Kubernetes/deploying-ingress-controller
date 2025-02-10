@@ -1,0 +1,7 @@
+Visit website: 
+https://docs.nginx.com/nginx-ingress-controller/installation/installing-nic/installation-with-helm/
+
+
+#To deploy NGINX Ingress controller #
+helm -n nginx-ingress install nginx-ingress oci://ghcr.io/nginx/charts/nginx-ingress --version 2.0.0
+

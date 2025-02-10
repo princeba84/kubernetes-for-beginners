@@ -1,0 +1,158 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx-web
+
+
+# ConfigMap for nginx vhost configs
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config-web
+  namespace: nginx-web
+data:
+  vhost.conf: |
+    server {
+      listen 80;
+      server_name localhost;
+      location /web {
+        root /usr/share/nginx/html;
+        index index.html;
+      }   
+    }
+
+
+# ConfigMap for index.html file #    
+---
+apiVersion: v1
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Welcome to Online Shop</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f9;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+            .content {
+                text-align: center;
+                padding: 30px;
+                background-color: #ffffff;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+            }
+            h1 {
+                color: #333;
+                font-size: 36px;
+            }
+            p {
+                color: #666;
+                font-size: 18px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="content">
+            <h1>Welcome to WEB</h1>
+            <p>Your one-stop shop for all your needs!</p>
+        </div>
+    </body>
+    </html>
+kind: ConfigMap
+metadata:
+  name: html-file
+  namespace: nginx-web
+
+
+# NGINX Deployment with 1 replicas
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx-deployment-web
+    env: test
+  name: nginx-deployment-web
+  namespace: nginx-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-deployment-web
+      env: test
+  template:
+    metadata:
+      labels:
+        app: nginx-deployment-web
+        env: test
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-config-web
+          mountPath: /etc/nginx/conf.d
+        - name: nginx-html-file
+          mountPath: /usr/share/nginx/html/web
+      volumes:
+      - name: nginx-config-web
+        configMap:
+          name: nginx-config-web  
+      - name: nginx-html-file
+        configMap:
+          name: html-file
+
+# Service to expose NGINX deployment
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx-deployment-web
+    env: test
+  name: web-service
+  namespace: nginx-web
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginx-deployment-web
+    env: test
+  type: ClusterIP
+
+
+# Ingress Object 
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-ingress
+  namespace: nginx-web
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: web.example.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: web-service
+            port:
+              number: 80
+        path: /web
+        pathType: Prefix

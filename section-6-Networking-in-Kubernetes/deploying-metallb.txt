@@ -1,0 +1,32 @@
+# Visit website  https://metallb.io/
+
+Deploy the MetalLB using below command
+
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.9/config/manifests/metallb-native.yaml
+
+
+#Configure IPAddressPool for MetalLB # Apply below configuration #
+
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: k8s-ip-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.168.99.40-192.168.99.80
+  autoAssign: true
+
+
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: l2-advertisement
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - k8s-ip-pool
+
+

@@ -1,0 +1,35 @@
+# 1.Generate Private Key 
+# openssl genrsa -out kube-user.key 2048
+#
+#
+# 2. Create CSR for User 
+# openssl req -new -key kube-user.key -out kube-user.csr -subj "/CN=kube-user/O=aaps-reader/O=app-admin" 
+#
+# 3. Create CSR Object
+
+---
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  name: kube-user-csr
+spec:
+  request: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlJQ2d6Q0NBV3NDQVFBd1BqRVNNQkFHQTFVRUF3d0phM1ZpWlMxMWMyVnlNUlF3RWdZRFZRUUtEQXRoWVhCegpMWEpsWVdSbGNqRVNNQkFHQTFVRUNnd0pZWEJ3TFdGa2JXbHVNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DCkFROEFNSUlCQ2dLQ0FRRUEwRUE2cUgvbE0xTUY0dFNRc0hYb0ZmODNTNENtNTZRTG9GblNHWHV3eS9ZZ2RIZ2IKSWtaME1BbHU5NVlaRjVFbzF2Z3RvalN4WVdDblI2eFpPVmJiUjh0bCtSdEtBUzVhRzhVYjNOaFltR3c4U2dESwpTTU9NdTlacXFYZlJCL3dWYjg4R29uaEk0RHA5TDY4UEhUTE1oc3B6bTMyNDdDUllnTDBld3RYMk45ckZkc21QCmVPcDRneE13bXNFUVFoOGE2a2oyMGlvTk9Zbm1NTkI3aHQ5OGFZVkg3Q2syK0J0ZnhsOGpMbmNYcUovN1plcXIKeDJ1N2VEOSt6Z0NzWGVnSFVXRGhGT2RiTkdvRkJNMEs3cDFxQU8wSEI2ZjAzV0J6L3I2Q2ljNXIza2dlbG5YVwpwMm41Y0ZPdEFmaHVEaWZSQS9USkU5K0svcTVvemZFc1BNaDlsUUlEQVFBQm9BQXdEUVlKS29aSWh2Y05BUUVMCkJRQURnZ0VCQUdvSnNuekJ6M0xYdWt2NTRaUmJMUG5Fc1pXdnd1QzVoQ0hyN1YvU25Xeld0VytKYnhNUzY0Z3gKbCtKQmYrcHBvZmtFYkdPa2tBeWhJOFpOYWx1OTBVbmZOT0Zhck5mdm9zTnVhcUcvV3JHSkEvSVViQnZPd1h6UQp2ckJudW1GaVNCUkpUK2IydmRkQ2FOb3B0TWV4NlhNcUptWG90RmFISXZPb09pUlZWNFFKeTlLb2x5aDY0UkdCCmh6eW9leC9jUWZUWHFLV2FLVWRtbWRxTGhYYm9GTTdnSmdXWGU0b0VYQy9vMnpWcnpyVlNlRVBPYWU1RkZaZzMKYnhWM0hDMG1JVmZJQzg0YTJuMXZ5QUk1djYxTXhyTzVPQVprWWtNZmRCWUhYNmltRktxbXpMeXAvRUZBVzVPbwp1dm53WjBsQXNpdDF6Wm1WTWFhVzUxSElLUjdRRiswPQotLS0tLUVORCBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0K
+  signerName: kubernetes.io/kube-apiserver-client
+  expirationSeconds: 864000
+  usages:
+  - client auth
+...
+
+
+# 4. List the CSR
+#    kubectl get csr
+#
+# 5. Approve CSR for User
+#    kubectl certificate approve kube-user-csr
+#
+# 6. Get the certificate
+#    kubectl get csr/kube-user-csr -o yaml    ( Certificate is base64 enconded under status.certificate) 
+#
+# 7. Retrieve the certificate from CSR
+#    kubectl get csr/kube-user-csr -o jsonpath='{.status.certificate}'| base64 -d > kube-user.crt
+#

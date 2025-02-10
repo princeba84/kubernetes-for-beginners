@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: externalname-service
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-name-service
+  namespace: externalname-service
+spec:
+  type: ExternalName
+  externalName: my.ext.example.com

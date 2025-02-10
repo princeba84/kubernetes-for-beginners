@@ -1,0 +1,9 @@
+
+Visit website: (URL might change in future) 
+https://github.com/weaveworks/weave/blob/master/site/kubernetes/kube-addon.md#-installation
+
+
+On this website, You will find below command to deploy weave-net with this single command: 
+
+kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+
