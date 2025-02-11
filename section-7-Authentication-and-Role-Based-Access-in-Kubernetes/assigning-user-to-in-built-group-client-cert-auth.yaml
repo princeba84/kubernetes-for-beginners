@@ -1,0 +1,46 @@
+# 1.Generate Private Key 
+# openssl genrsa -out kube-admin-user.key 2048
+#
+#
+# 2. Create CSR for User 
+# openssl req -new -key kube-admin-user.key -out kube-admin-user.csr -subj "/CN=kube-admin-user/O=system:kubeadm:cluster-admins" 
+#
+# 3. Create CSR Object
+
+---
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSigningRequest
+metadata:
+  name: kube-admin-user-csr
+spec:
+  request: Paste base64 CSR Content here
+  signerName: kubernetes.io/kube-apiserver-client
+  usages:
+  - client auth
+...
+
+
+# 4. List the CSR
+#    kubectl get csr
+#
+# 5. Approve CSR for User
+#    kubectl certificate approve kube-admin-user-csr
+#
+# 6. Get the certificate
+#    kubectl get csr/kube-admin-user-csr -o yaml    ( Certificate is base64 enconded under status.certificate) 
+#
+# 7. Retrieve the certificate from CSR
+#    kubectl get csr/kube-admin-user-csr -o jsonpath='{.status.certificate}'| base64 -d > kube-admin-user.crt
+#
+# 8. Adding User's creds to kubeconfig file
+#    kubectl config set-credentails kube-admin-user --client-key=kube-admin-user.key --client-certificate=kube-admin-user.crt --embed-certs=true
+
+# 9. Adding context for the user
+#    kubectl config set-context kube-admin-user --cluster=kubernetes --user=kube-admin-user
+
+# 10.Switch context to kube-admin-user
+#    kubectl config use-context kube-admin-user
+
+# 11. Verify Authorization
+#     kubectl get pod  (It will work because user has admin access through built-in group "system:kubeadm:cluster-admins" 
+#
