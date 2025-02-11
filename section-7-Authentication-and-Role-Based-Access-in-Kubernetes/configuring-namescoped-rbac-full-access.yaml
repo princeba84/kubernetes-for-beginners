@@ -6,19 +6,7 @@ metadata:
   namespace: kube-user-ns
 rules:
 - apiGroups:
-  - ""
-  resources:
-  - '*'
-  verbs:
-  - '*'
-- apiGroups:
-  - apps
-  resources:
-  - '*'
-  verbs:
-  - '*'
-- apiGroups:
-  - networking.k8s.io
+  - "*"
   resources:
   - '*'
   verbs:

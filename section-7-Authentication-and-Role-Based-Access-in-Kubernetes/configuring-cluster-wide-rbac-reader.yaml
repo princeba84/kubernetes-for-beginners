@@ -5,23 +5,7 @@ metadata:
   name: cr-for-kube-user
 rules:
 - apiGroups:
-  - ""
-  resources:
   - "*"
-  verbs:
-  - list
-  - get
-  - watch
-- apiGroups:
-  - apps
-  resources:
-  - "*"
-  verbs:
-  - list
-  - get
-  - watch
-- apiGroups:
-  - networking.k8s.io
   resources:
   - "*"
   verbs:
