@@ -9,18 +9,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: test-deployment
-  name: test-deployment
+    app: test-deployment-pod-affinity
+  name: test-deployment-pod-affinity
   namespace: pod-affinity
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
-      app: test-deployment
+      app: test-deployment-pod-affinity
   template:
     metadata:
       labels:
-        app: test-deployment
+        app: test-deployment-pod-affinity
     spec:
       affinity:
         podAffinity:
@@ -30,9 +30,8 @@ spec:
               - key: app
                 operator: In
                 values:
-                - web
+                - test-deployment-pod-affinity
             topologyKey: kubernetes.io/hostname
-            namespaceSelector: {}
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 100
