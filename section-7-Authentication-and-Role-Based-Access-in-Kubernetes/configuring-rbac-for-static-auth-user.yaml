@@ -3,7 +3,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: cluster-role-sa
+  name: cr-static-auth-user
 rules:
 - apiGroups:
   - ""
@@ -13,23 +13,19 @@ rules:
   - get
   - list
   - watch
-  - delete
 
 #ClusterRoleBinding Object Configuration
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: crb-for-sa
+  name: crb-static-auth-user
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: cluster-role-sa
+  name: cr-static-auth-user
 subjects:
-- kind: ServiceAccount
-  name: custom-sa
-  namespace: default
-
-
-
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: group1
 

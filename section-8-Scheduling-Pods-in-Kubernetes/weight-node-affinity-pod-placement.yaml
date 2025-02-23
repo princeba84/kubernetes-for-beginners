@@ -1,0 +1,63 @@
+# Note : We have to set labels on node for demo #
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: node-affinity-weight
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: test-deployment
+  name: test-deployment
+  namespace: node-affinity-weight
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-deployment
+  template:
+    metadata:
+      labels:
+        app: test-deployment
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - worker1.example.com
+                - worker2.example.com
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 10
+            preference:
+              matchExpressions:
+              - key: purpose
+                operator: In
+                values:
+                - performance
+          - weight: 50
+            preference:
+              matchExpressions:
+              - key: disktype
+                operator: In
+                values:
+                - ssd
+      containers:
+      - image: nginx
+        name: nginx
+        resources:
+          requests:
+            cpu: 10m
+            memory : 10Mi
+          limits:
+            cpu: 30m
+            memory: 30Mi
+
+
