@@ -7,7 +7,7 @@ metadata:
   name: test-pod
 spec:
   nodeSelector:
-    kubernetes.io/hostname: worker2.example.com
+    app: myweb
   containers:
   - image: nginx
     name: test-pod

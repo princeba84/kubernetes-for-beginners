@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nodename-direct-selection
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: test-pod
+  name: test-pod
+  namespace: nodename-direct-selection
+spec:
+  nodeName: worker3.example.com
+  containers:
+  - image: nginx
+    name: nginx
+
+

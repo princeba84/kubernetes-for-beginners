@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: node-affinity
+  name: taints-and-tolerations
 
 ---
 apiVersion: apps/v1
@@ -11,7 +11,7 @@ metadata:
   labels:
     app: test-deployment
   name: test-deployment
-  namespace: node-affinity
+  namespace: taints-and-tolerations
 spec:
   replicas: 1
   selector:
@@ -30,25 +30,12 @@ spec:
               - key: kubernetes.io/hostname
                 operator: In
                 values:
-                - worker1.example.com
-                - worker3.example.com
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            preference:
-              matchExpressions:
-              - key: purpose
-                operator: In
-                values:
-                - performance
+                - worker1.example.com 
+      tolerations:
+      - key: kubernetes.io/hostname
+        operator: Equal
+        value: worker1.example.com
+        effect: NoSchedule
       containers:
       - image: nginx
         name: nginx
-        resources:
-          requests:
-            cpu: 20m
-            memory : 20Mi
-          limits:
-            cpu: 50m
-            memory: 50Mi
-
-
