@@ -1,0 +1,47 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: static-volume
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: hostpath-pvc
+  namespace: static-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 200Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: deploy-pvc
+  name: deploy-pvc
+  namespace: static-volume
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deploy-pvc
+  template:
+    metadata:
+      labels:
+        app: deploy-pvc
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - name: my-pvc-vol
+          mountPath: /app/data
+      volumes:
+      - name: my-pvc-vol
+        persistentVolumeClaim:
+          claimName: hostpath-pvc

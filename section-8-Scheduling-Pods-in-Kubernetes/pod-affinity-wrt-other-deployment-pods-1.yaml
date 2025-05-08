@@ -2,39 +2,37 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: pod-affinity-other-deployment
+  name: pod-affinity-redis
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: test-deployment-pod-affinity
-  name: test-deployment-pod-affinity
-  namespace: pod-affinity-other-deployment
+    database: redis
+  name: test-deployment-redis
+  namespace: pod-affinity-redis
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: test-deployment-pod-affinity
+      database: redis
   template:
     metadata:
       labels:
-        app: test-deployment-pod-affinity
+        database: redis
     spec:
       affinity:
-        podAffinity:
+        podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:
               matchExpressions:
-              - key: app
+              - key: database
                 operator: In
                 values: 
-                - monitoring 
+                - redis 
             topologyKey: kubernetes.io/hostname
-            namespaceSelector: {}
       containers:
-      - image: nginx
-        name: nginx
-
+      - image: redis
+        name: redis-cache
 
