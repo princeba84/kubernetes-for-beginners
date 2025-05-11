@@ -1,0 +1,38 @@
+# Steps to upgrade worker nodes :
+# Connect to worker node:
+ssh worker1.example.com
+
+# Setting up apt repository:
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /' | \ 
+sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+# Upgrading kubeadm (Execute commands as root user or with sudo)
+apt-mark unhold kubeadm
+apt-get update    
+apt-get install -y kubeadm=1.32.4-1.1  # if it fails , try apt --fix-broken install
+apt-mark hold kubeadm
+
+
+# Drain the Node :
+kubectl drain worker1.exampl.com
+
+# Upgrading kubelet and kubectl :
+
+apt-mark unhold kubectl kubelet
+apt-get update
+apt --fix-broken install
+apt-get install -y kubectl=1.32.4-1.1 kubelet=1.32.4-1.1     #If it fails , execute  apt --fix-broken install 
+apt-mark hold kubectl kubelet
+
+# Restart Kubelet :
+systemctl restart kubelet
+systemctl status kubelet  # To check status after restart
+
+# Uncordon Node:
+kubectl uncordon worker1.example.com  #Execute on controlplane node 
+
+# Verify version :
+# kubectl get nodes   (Execute on controlplane node )
+
+# Repeat the same process for each worker node !!!

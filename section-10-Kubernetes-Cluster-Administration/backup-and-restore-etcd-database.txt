@@ -1,0 +1,15 @@
+# Snapshot of etcd database
+
+ETCDCTL_API=3  etcdctl snapshot save /tmp/etcd-snapshot.db \
+   --endpoints=https://127.0.0.1:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key \
+
+# OR
+export ETCDCTL_API=3
+export ETCDCTL_CACERT=/etc/kubernetes/pki/etcd/ca.crt
+export ETCDCTL_CERT=/etc/kubernetes/pki/etcd/server.crt
+export ETCDCTL_KEY=/etc/kubernetes/pki/etcd/server.key
+
+etcdctl snapshot save /tmp/etcd-snapshot.db --endpoints=https://127.0.0.1:2379
