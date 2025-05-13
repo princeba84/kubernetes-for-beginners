@@ -1,1 +1,60 @@
-apu
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pod-cleaner
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pod-cleaner
+  namespace: pod-cleaner
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pod-cleaner-role
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch", "delete"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pod-cleaner-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: pod-cleaner-role
+subjects:
+- kind: ServiceAccount
+  name: pod-cleaner
+  namespace: pod-cleaner
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: delete-failed-pods
+  namespace: pod-cleaner
+spec:
+  template:
+    spec:
+      serviceAccountName: pod-cleaner
+      containers:
+      - name: kubectl
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo "Deleting all failed pods in all namespaces..."
+          kubectl delete pods --all-namespaces --field-selector=status.phase=Pending
+      restartPolicy: Never
+  backoffLimit: 1
+
+
