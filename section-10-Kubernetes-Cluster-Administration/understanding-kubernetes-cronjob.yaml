@@ -42,24 +42,23 @@ metadata:
   name: delete-failed-pods-cj
   namespace: pod-cleaner
 spec:
-  schedule: "0 2 * * *"  # Runs daily at 2:00 AM
-  jobTemplate:
-    spec:
-      backoffLimit: 1
-      template:
-        spec:
-          serviceAccountName: pod-cleaner
-          containers:
-          - name: kubectl
-            image: bitnami/kubectl:latest
-            command:
-            - /bin/sh
-            - -c
-            - |
-              echo "Deleting failed pods..."
-              kubectl delete pods --all-namespaces --field-selector=status.phase=Failed
-          restartPolicy: Never
-
+ schedule: "0 2 * * *"  # Runs daily at 2:00 AM
+ jobTemplate:
+   spec:
+     template:
+       spec:
+        serviceAccountName: pod-cleaner
+         containers:
+         - name: kubectl
+           image: bitnami/kubectl:latest
+           command:
+           - /bin/sh
+           - -c
+           - |
+             echo "Deleting failed pods..."
+             kubectl delete pods --all-namespaces --field-selector=status.phase=Failed
+         restartPolicy: Never
+     backofflimit: 1 
 
 
 
