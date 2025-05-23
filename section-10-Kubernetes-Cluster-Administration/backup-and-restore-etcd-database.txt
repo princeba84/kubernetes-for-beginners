@@ -1,15 +1,42 @@
-# Snapshot of etcd database
+# Snapshot of etcd database # Execute command as root user or use privilage escation
 
-ETCDCTL_API=3  etcdctl snapshot save /tmp/etcd-snapshot.db \
-   --endpoints=https://127.0.0.1:2379 \
-  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
-  --cert=/etc/kubernetes/pki/etcd/server.crt \
-  --key=/etc/kubernetes/pki/etcd/server.key \
+sudo ETCDCTL_API=3  etcdctl snapshot save /tmp/etcd-snapshot.db \
+     --endpoints=https://127.0.0.1:2379 \
+     --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+     --cert=/etc/kubernetes/pki/etcd/server.crt \
+     --key=/etc/kubernetes/pki/etcd/server.key
 
-# OR
-export ETCDCTL_API=3
-export ETCDCTL_CACERT=/etc/kubernetes/pki/etcd/ca.crt
-export ETCDCTL_CERT=/etc/kubernetes/pki/etcd/server.crt
-export ETCDCTL_KEY=/etc/kubernetes/pki/etcd/server.key
 
-etcdctl snapshot save /tmp/etcd-snapshot.db --endpoints=https://127.0.0.1:2379
+# To check status of sanpshop # Execute command as root user or use privilage escation
+
+sudo ETCDCTL_API=3 etcdctl --write-out=table snapshot status /tmp/etcd-snapshot.db \
+     --endpoints=https://127.0.0.1:2379 \
+     --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+     --cert=/etc/kubernetes/pki/etcd/server.crt \
+     --key=/etc/kubernetes/pki/etcd/server.key
+
+
+
+# Alternative way to snapshot etcd database #Execute command as root user or use privilage escation
+
+sudo export ETCDCTL_API=3
+sudo export ETCDCTL_CACERT=/etc/kubernetes/pki/etcd/ca.crt
+sudo export ETCDCTL_CERT=/etc/kubernetes/pki/etcd/server.crt
+sudo export ETCDCTL_KEY=/etc/kubernetes/pki/etcd/server.key
+
+sudo etcdctl snapshot save /tmp/etcd-snapshot.db --endpoints=https://127.0.0.1:2379
+sudo etcdctl --write-out=table snapshot status /tmp/etcd-snapshot.db   (OR)   sudo etcdutl --write-out=table snapshot status /tmp/etcd-snapshot.db
+
+
+
+
+##################################### Restoring etcd from backup ############################################
+
+sudo export ETCDCTL_API=3
+sudo export ETCDCTL_CACERT=/etc/kubernetes/pki/etcd/ca.crt
+sudo export ETCDCTL_CERT=/etc/kubernetes/pki/etcd/server.crt
+sudo export ETCDCTL_KEY=/etc/kubernetes/pki/etcd/server.key
+sudo etcdutl --data-dir /var/lib/etcd-from-backup snapshot restore /tmp/etcd-snapshot.db
+
+
+# Update etcd pod manifest file to use this new Data directory
