@@ -2,20 +2,20 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: pod-cleaner
+  name: pod-cleaner-cj
 
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: pod-cleaner
-  namespace: pod-cleaner
+  name: pod-cleaner-cj
+  namespace: pod-cleaner-cj
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: pod-cleaner-role
+  name: pod-cleaner-role-cj
 rules:
 - apiGroups: [""]
   resources: ["pods"]
@@ -25,40 +25,40 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: pod-cleaner-rolebinding
+  name: pod-cleaner-rolebinding-cj
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: pod-cleaner-role
+  name: pod-cleaner-role-cj
 subjects:
 - kind: ServiceAccount
-  name: pod-cleaner
-  namespace: pod-cleaner
+  name: pod-cleaner-cj
+  namespace: pod-cleaner-cj
 
 ---
 apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: delete-failed-pods-cj
-  namespace: pod-cleaner
+  namespace: pod-cleaner-cj
 spec:
- schedule: "0 2 * * *"  # Runs daily at 2:00 AM
- jobTemplate:
-   spec:
-     template:
-       spec:
-        serviceAccountName: pod-cleaner
-         containers:
-         - name: kubectl
-           image: bitnami/kubectl:latest
-           command:
-           - /bin/sh
-           - -c
-           - |
-             echo "Deleting failed pods..."
-             kubectl delete pods --all-namespaces --field-selector=status.phase=Failed
-         restartPolicy: Never
-     backofflimit: 1 
+  schedule: "0 2 * * *"  # Runs daily at 2:00 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: pod-cleaner-cj
+          containers:
+          - name: kubectl
+            image: bitnami/kubectl:latest
+            command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Deleting failed pods..."
+              kubectl delete pods --all-namespaces --field-selector=status.phase=Failed
+          restartPolicy: Never
+      backoffLimit: 1 
 
 
 

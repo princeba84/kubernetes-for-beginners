@@ -42,6 +42,7 @@ metadata:
   name: delete-failed-pods
   namespace: pod-cleaner
 spec:
+  backoffLimit: 1
   template:
     spec:
       serviceAccountName: pod-cleaner
@@ -55,6 +56,5 @@ spec:
           echo "Deleting all failed pods in all namespaces..."
           kubectl delete pods --all-namespaces --field-selector=status.phase=Failed
       restartPolicy: Never
-  backoffLimit: 1
 
 

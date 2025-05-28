@@ -3,7 +3,7 @@
 #
 #
 # 2. Create CSR for User 
-# openssl req -new -key kube-admin-user.key -out kube-admin-user.csr -subj "/CN=kube-admin-user/O=system:kubeadm:cluster-admins" 
+# openssl req -new -key kube-admin-user.key -out kube-admin-user.csr -subj "/CN=kube-admin-user/O=kubeadm:cluster-admins" 
 #
 # 3. Create CSR Object
 
