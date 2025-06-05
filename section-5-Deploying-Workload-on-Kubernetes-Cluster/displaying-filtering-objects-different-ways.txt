@@ -1,0 +1,35 @@
+
+
+# Displaying object configuration(live)  in YAML format
+
+kubectl get pod POD_NAME -o yaml
+
+
+# Displaying live object configuration in JSON format
+
+kubectl get pod POD_NAME -o json
+
+
+# Displaying list of images with custom columns name
+
+kubectl get pods -A -o=custom-columns='IMAGES:spec.containers['*'].image'
+
+
+
+# Listing pods sorted bt restart count
+
+kubectl get pods -A --sort-by=.status.containerStatuses[0].restartCount
+
+
+# Get all running pods in the namespace
+
+kubectl get pods --field-selector=status.phase=Running
+
+# List events in namespace sorted by timestamp 
+
+kubectl get events --sort-by=.metadata.Timestamp
+
+
+# Displaying resource details in descriptive format
+
+kubectl describe pod POD_NAME   (e.g.  kubectl describe RESOURCE_TYPE RESOURCE_NAME ) 
